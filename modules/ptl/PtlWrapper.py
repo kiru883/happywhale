@@ -12,7 +12,7 @@ class PtlWrapper(ptl.LightningModule):
         super().__init__()
         if sch_settings is not None:
             self.scheduler = sch_settings['scheduler']
-            self.sch_kwargs = sch_settings
+            self.sch_kwargs = {k: v for k, v in sch_settings.items() if k != 'scheduler'}
         else:
             self.scheduler = False
 

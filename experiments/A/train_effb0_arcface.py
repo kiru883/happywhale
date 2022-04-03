@@ -37,24 +37,42 @@ class EffB0_Arc(nn.Module):
 
 if __name__ == "__main__":
     SEED = 42
-    PROJ_PATH = '/home/kirill/projects/personal_projects/happywhale/'
+    PROJ_PATH = '/home/kkirill/happywhale/'
     ohe_path = PROJ_PATH + 'data/process/ohe.joblib'
     skf_path = PROJ_PATH + 'data/process/skf5_id_fold_mapping.joblib'
-    train_csv_path = PROJ_PATH + 'data/raw/happy-whale-and-dolphin/train.csv'
-    train_image_path = PROJ_PATH + 'data/raw/happy-whale-and-dolphin/train_images/'
     model_save_path = PROJ_PATH + 'data/model/'
+    last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
+
+    DATA_PATH = '/home/vadbeg/Data_SSD/Kaggle/happywhale/'
+    train_csv_path = DATA_PATH + 'train.csv'
+    train_image_path = DATA_PATH + 'train_images/'
+    # train_csv_path = PROJ_PATH + 'data/raw/happy-whale-and-dolphin/train.csv'
+    # train_image_path = PROJ_PATH + 'data/raw/happy-whale-and-dolphin/train_images/'
+
     FOLD_NUM = 0
-    BATCH_SIZE = 16 # 32
-    EPOCHS = 30
+    BATCH_SIZE = 80
+    EPOCHS = 25
     GPUS = 1
     LR = 1e-3
     SIZE = 224
 
     SEED_EVERYTHING(SEED)
 
-    # model
-    model = PtlWrapper(model=EffB0_Arc(),
-                       lr=LR)
+    # model, scheduler
+    step_lr_sch_settings = {
+        'scheduler': torch.optim.lr_scheduler.StepLR,
+        'step_size': 10,
+        'gamma': 0.2
+    }
+    # load last best model
+    state_dict = torch.load(last_best_model_path)['state_dict']
+    state_dict = {k[len('model.'):]: v for k, v in state_dict.items()}
+    model = EffB0_Arc()
+    model.load_state_dict(state_dict)
+
+    model = PtlWrapper(model=model,
+                       lr=LR,
+                       sch_settings=step_lr_sch_settings)
     model.train()
 
     # open folds
@@ -68,16 +86,15 @@ if __name__ == "__main__":
                                       specific_indx=train_idx,
                                       ohe_path=ohe_path,
                                       preprocessing=train_prep)
-    train_dataset = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+    train_dataset = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
     val_dataset = DatasetHappywhile(image_path=train_image_path,
                                     train_csv_path=train_csv_path,
                                     specific_indx=val_idx,
                                     ohe_path=ohe_path,
                                     preprocessing=val_prep)
-    val_dataset = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+    val_dataset = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
 
-    # checkpoint callbacks, schedulers
-    #step_lr_sch = torch.
+    # checkpoint callbacks
     checkpoint_callback = ModelCheckpoint(dirpath=model_save_path,
                                           monitor='val_map5',
                                           save_top_k=3,
