@@ -61,10 +61,6 @@ if __name__ == "__main__":
     skf_folds = joblib.load(skf_path)
     train_idx, val_idx = skf_folds[FOLD_NUM]['train_idx'], skf_folds[FOLD_NUM]['test_idx']
 
-    #!!!!!!!!!
-    #train_idx = train_idx[:30]
-    #val_idx = val_idx[:30]
-
     # datasets, preprocessor
     train_prep, val_prep = exp_a_preprocessing(msize=SIZE)
     train_dataset = DatasetHappywhile(image_path=train_image_path,
