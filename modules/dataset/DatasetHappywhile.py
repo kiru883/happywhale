@@ -34,7 +34,7 @@ class DatasetHappywhile(torch.utils.data.Dataset):
         input = cv2.cvtColor(input, cv2.COLOR_RGB2BGR)
         input = self.preprocessing(image=input)['image']
         input = torch.tensor(input, dtype=torch.float32)
-        input /= torch.max(input)
+        input /= 255.0 #torch.max(input)
         input = torch.moveaxis(input, 2, 0)
         #print(input.dtype)
         #print(input.shape)

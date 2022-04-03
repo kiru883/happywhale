@@ -18,6 +18,7 @@ class PtlWrapper(ptl.LightningModule):
 
         self.lr = lr
         self.model = model
+        self.softmax = nn.Softmax()
 
         #  metrics
         self.loss = loss_f
@@ -40,13 +41,15 @@ class PtlWrapper(ptl.LightningModule):
     def training_step(self, train_batch, batch_idx):
         input, label = train_batch['input'], train_batch['label']
 
-        _, pred = self.model(input, label)
-        pred = pred.type(torch.float32)
+        _, pred_cos_dist = self.model(input, label)
+        pred_cos_dist = pred_cos_dist.type(torch.float32)
+        pred_prob = self.softmax(pred_cos_dist)
 
-        loss = self.loss(pred, label)
-        map5 = self.map5(pred, label)
-        top5 = self.top5(pred, label)
-        top1 = self.top1(pred, label)
+        loss = self.loss(pred_cos_dist, label)
+
+        map5 = self.map5(pred_prob, label)
+        top5 = self.top5(pred_prob, label)
+        top1 = self.top1(pred_prob, label)
 
         #print(loss)
         #print(top5)
@@ -89,14 +92,13 @@ class PtlWrapper(ptl.LightningModule):
 
         input, label = val_batch['input'], val_batch['label']
 
-        _, pred = self.model(input, label)
-        pred = pred.type(torch.float32)
-        #print("pred ", pred[:, :25])
-        # print("target", y[:, :25])
+        _, pred_cos_dist = self.model(input, label)
+        pred_cos_dist = pred_cos_dist.type(torch.float32)
+        pred_prob = self.softmax(pred_cos_dist)
 
-        map5 = self.map5(pred, label)
-        top5 = self.top5(pred, label)
-        top1 = self.top1(pred, label)
+        map5 = self.map5(pred_prob, label)
+        top5 = self.top5(pred_prob, label)
+        top1 = self.top1(pred_prob, label)
 
         return {'map5': map5.detach(), 'top5': top5.detach(), 'top1': top1.detach()}
 
