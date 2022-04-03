@@ -8,6 +8,7 @@ __pycache__/
 
 # DATA
 data/
+lightning_logs/
 
 # pycharm
 .idea/
