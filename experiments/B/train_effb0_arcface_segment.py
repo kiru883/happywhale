@@ -17,22 +17,26 @@ from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc
 
 if __name__ == "__main__":
     SEED = 42
-    PROJ_PATH = '/home/kirill/projects/personal_projects/happywhale/'
-    #PROJ_PATH = '/home/kkirill/happywhale/'
+    PROJ_PATH = '/home/kirill/projects/happywhale/'
+    # PROJ_PATH = '/home/kirill/projects/personal_projects/happywhale/'
+    # PROJ_PATH = '/home/kkirill/happywhale/'
     ohe_path = PROJ_PATH + 'data/process/ohe.joblib'
     skf_path = PROJ_PATH + 'data/process/skf5_id_fold_mapping.joblib'
     model_save_path = PROJ_PATH + 'data/model/B/'
-    #last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
+    # last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
 
+    DATA_PATH = '/media/kirill/Windows 10/kaggle/'
     # DATA_PATH = '/home/vadbeg/Data_SSD/Kaggle/happywhale/'
     # train_csv_path = DATA_PATH + 'train.csv'
     # train_image_path = DATA_PATH + 'train_images/'
-    train_csv_path = PROJ_PATH + 'data/raw/segmented/seg_train.csv'
-    train_image_path = PROJ_PATH + 'data/raw/segmented/seg_img/'
+    # train_csv_path = PROJ_PATH + 'data/raw/segmented/seg_train.csv'
+    # train_image_path = PROJ_PATH + 'data/raw/segmented/seg_img/'
+    train_csv_path = DATA_PATH + 'segmented/seg_train.csv'
+    train_image_path = DATA_PATH + 'segmented/seg_img/'
 
     FOLD_NUM = 0
-    BATCH_SIZE = 8
-    EPOCHS = 25
+    BATCH_SIZE = 32
+    EPOCHS = 30
     GPUS = 1
     LR = 1e-3
     SIZE = 224
@@ -59,10 +63,6 @@ if __name__ == "__main__":
     # open folds
     skf_folds = joblib.load(skf_path)
     train_idx, val_idx = skf_folds[FOLD_NUM]['train_idx'], skf_folds[FOLD_NUM]['test_idx']
-
-    # test idxses
-    #train_idx = train_idx[:2000]
-    #val_idx = val_idx[:2000]
 
     # datasets, preprocessor
     train_prep, val_prep = exp_a_basic_preprocessing(msize=SIZE)
