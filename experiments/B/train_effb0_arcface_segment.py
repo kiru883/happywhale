@@ -11,7 +11,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from modules.utils.seed_everything import SEED_EVERYTHING
 from modules.dataset.DatasetHappywhile import DatasetHappywhile
 from modules.ptl.PtlWrapper import PtlWrapper
-from modules.processing.preprocess import exp_a_preprocessing
+from modules.processing.preprocess import exp_a_preprocessing, exp_a1_preprocessing
 from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc
 
 
@@ -40,11 +40,11 @@ if __name__ == "__main__":
     SEED_EVERYTHING(SEED)
 
     # model, scheduler
-    step_lr_sch_settings = {
-        'scheduler': torch.optim.lr_scheduler.StepLR,
-        'step_size': 10,
-        'gamma': 0.3
-    }
+    step_lr_sch_settings = None#{
+    #     'scheduler': torch.optim.lr_scheduler.StepLR,
+    #     'step_size': 10,
+    #     'gamma': 0.3
+    # }
     # load last best model
     #state_dict = torch.load(last_best_model_path)['state_dict']
     #state_dict = {k[len('model.'):]: v for k, v in state_dict.items()}
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     #val_idx = val_idx[:2000]
 
     # datasets, preprocessor
-    train_prep, val_prep = exp_a_preprocessing(msize=SIZE)
+    train_prep, val_prep = exp_a1_preprocessing(msize=SIZE)
     train_dataset = DatasetHappywhile(image_path=train_image_path,
                                       train_csv_path=train_csv_path,
                                       specific_indx=train_idx,
@@ -88,7 +88,9 @@ if __name__ == "__main__":
     # train
     trainer = ptl.Trainer(max_epochs=EPOCHS,
                           gpus=GPUS,
-                          callbacks=[checkpoint_callback])
+                          callbacks=[checkpoint_callback],
+
+                          auto_lr_find=True)
     trainer.fit(model, train_dataset, val_dataset)
 
 

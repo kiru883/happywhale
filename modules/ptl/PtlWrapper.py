@@ -9,7 +9,7 @@ from modules.metrics.MaP import MaP5
 
 
 class PtlWrapper(ptl.LightningModule):
-    def __init__(self, model, lr=1e-3, loss_f=nn.CrossEntropyLoss(), sch_settings=None):
+    def __init__(self, model, lr=1e-3, loss_f=nn.CrossEntropyLoss(reduction='none'), sch_settings=None):
         super().__init__()
         if sch_settings is not None:
             self.scheduler = sch_settings['scheduler']
@@ -24,8 +24,8 @@ class PtlWrapper(ptl.LightningModule):
         #  metrics
         self.loss = loss_f
         self.map5 = MaP5
-        self.top1 = SparseTop1CategoricalAccuracy
-        self.top5 = torchmetrics.Accuracy(top_k=5)#SparseTop5CategoricalAccuracy
+        self.top1 = torchmetrics.Accuracy(top_k=1)
+        self.top5 = torchmetrics.Accuracy(top_k=5)
 
     def forward(self, inp):
         return self.model(inp)
@@ -50,11 +50,12 @@ class PtlWrapper(ptl.LightningModule):
         pred_prob = self.softmax(pred_cos_dist)
 
         loss = self.loss(pred_cos_dist, label)
+        loss = torch.mean(loss)
 
         map5 = self.map5(pred_prob, label)
-        top1 = self.top1(pred_prob, label)
 
         label = torch.argmax(label, dim=1)
+        top1 = self.top1(pred_prob, label)
         top5 = self.top5(pred_prob, label)
 
         return {'loss': loss, 'map5': map5.detach(), 'top5': top5.detach(), 'top1': top1.detach()}
@@ -100,11 +101,13 @@ class PtlWrapper(ptl.LightningModule):
         pred_prob = self.softmax(pred_cos_dist)
 
         loss = self.loss(pred_cos_dist, label)
+        print(loss)
+        loss = torch.mean(loss)
 
         map5 = self.map5(pred_prob, label)
-        top1 = self.top1(pred_prob, label)
 
         label = torch.argmax(label, dim=1)
+        top1 = self.top1(pred_prob, label)
         top5 = self.top5(pred_prob, label)
 
         return {'loss': loss.detach(), 'map5': map5.detach(), 'top5': top5.detach(), 'top1': top1.detach()}
@@ -124,6 +127,7 @@ class PtlWrapper(ptl.LightningModule):
         map5 = torch.mean(map5).detach()
 
         top5 = torch.stack(tensors=top5)
+        print(torch.max(top5))
         top5 = torch.mean(top5).detach()
 
         top1 = torch.stack(tensors=top1)

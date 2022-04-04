@@ -37,7 +37,7 @@ class DatasetHappywhile(torch.utils.data.Dataset):
         #print(input.shape)
         #print("label: ", label.shape)
         #input = torch.tensor(input, dtype=torch.float32)
-        input /= 255.0 #torch.max(input)
+        #input /= 255.0 #torch.max(input)
         #input = torch.moveaxis(input, 2, 0)
         #print(input.dtype)
 
