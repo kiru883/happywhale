@@ -1,20 +1,19 @@
 import torch
 import torch.nn as nn
+import timm
 
 from efficientnet_pytorch import EfficientNet
 
 
 class EffNetBx(nn.Module):
-    CLS_LAYERS = ['_fc', '_swish']
-
-    def __init__(self, model_name='efficientnet-b0'):
+    def __init__(self, model_name='tf_efficientnet_b0'):
         super(EffNetBx, self).__init__()
 
-        if model_name == 'efficientnet-b0':
-            self.model = EfficientNet.from_pretrained(model_name)
-            # replace fc and swish layers, add NORM
-            self.model._fc = nn.Identity()
-            self.model._swish = nn.Identity()
+        if model_name == 'tf_efficientnet_b0':
+            self.model = timm.create_model(model_name=model_name, pretrained=True, drop_rate=0.2)
+
+            # replace fc layer, add NORM
+            self.model.classifier = nn.Identity()
             self.model = nn.Sequential(
                 self.model,
                 nn.Linear(in_features=1280, out_features=512),

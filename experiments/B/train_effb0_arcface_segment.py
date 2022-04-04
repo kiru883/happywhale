@@ -31,7 +31,7 @@ if __name__ == "__main__":
     train_image_path = PROJ_PATH + 'data/raw/segmented/seg_img/'
 
     FOLD_NUM = 0
-    BATCH_SIZE = 16
+    BATCH_SIZE = 8
     EPOCHS = 25
     GPUS = 1
     LR = 1e-3
@@ -61,8 +61,8 @@ if __name__ == "__main__":
     train_idx, val_idx = skf_folds[FOLD_NUM]['train_idx'], skf_folds[FOLD_NUM]['test_idx']
 
     # test idxses
-    # train_idx = train_idx[:2000]
-    # val_idx = val_idx[:2000]
+    #train_idx = train_idx[:2000]
+    #val_idx = val_idx[:2000]
 
     # datasets, preprocessor
     train_prep, val_prep = exp_a_preprocessing(msize=SIZE)

@@ -7,7 +7,7 @@ from modules.models.Effnet import EffNetBx
 
 
 class EffB0_Arc(nn.Module):
-    def __init__(self, n_classes=15587, s=30.0, m=0.50, easy_margin=False, eff_name='efficientnet-b0'):
+    def __init__(self, n_classes=15587, s=30.0, m=0.50, easy_margin=False, eff_name='tf_efficientnet_b0'):
         super(EffB0_Arc, self).__init__()
 
         self.effnet = EffNetBx(model_name=eff_name)
