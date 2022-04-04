@@ -11,7 +11,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from modules.utils.seed_everything import SEED_EVERYTHING
 from modules.dataset.DatasetHappywhile import DatasetHappywhile
 from modules.ptl.PtlWrapper import PtlWrapper
-from modules.processing.preprocess import exp_a_preprocessing, exp_a1_preprocessing
+from modules.processing.preprocess import exp_a_preprocessing, exp_a1_preprocessing, exp_a_basic_preprocessing
 from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc
 
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     #val_idx = val_idx[:2000]
 
     # datasets, preprocessor
-    train_prep, val_prep = exp_a1_preprocessing(msize=SIZE)
+    train_prep, val_prep = exp_a_basic_preprocessing(msize=SIZE)
     train_dataset = DatasetHappywhile(image_path=train_image_path,
                                       train_csv_path=train_csv_path,
                                       specific_indx=train_idx,
@@ -81,9 +81,10 @@ if __name__ == "__main__":
 
     # checkpoint callbacks
     checkpoint_callback = ModelCheckpoint(dirpath=model_save_path,
-                                          monitor='val_map5',
+                                          monitor='val_top5',
                                           save_top_k=3,
-                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{train_map5:.2f}-{val_map5:.2f}')
+                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{train_map5:.2f}-{val_map5:.2f}',
+                                          mode='max')
 
     # train
     trainer = ptl.Trainer(max_epochs=EPOCHS,

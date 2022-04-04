@@ -76,9 +76,10 @@ if __name__ == "__main__":
 
     # checkpoint callbacks
     checkpoint_callback = ModelCheckpoint(dirpath=model_save_path,
-                                          monitor='val_map5',
+                                          monitor='val_top5',
                                           save_top_k=3,
-                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{train_map5:.2f}-{val_map5:.2f}')
+                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{train_map5:.2f}-{val_map5:.2f}',
+                                          mode='max')
 
     # train
     trainer = ptl.Trainer(max_epochs=EPOCHS,
