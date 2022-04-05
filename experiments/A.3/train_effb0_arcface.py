@@ -12,7 +12,7 @@ from modules.utils.seed_everything import SEED_EVERYTHING
 from modules.dataset.DatasetHappywhile import DatasetHappywhile
 from modules.ptl.PtlWrapper import PtlWrapper
 from modules.processing.preprocess import exp_a_preprocessing, exp_a_basic_preprocessing
-from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc_v2
+from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc
 
 
 if __name__ == "__main__":
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     PROJ_PATH = '/home/kkirill/happywhale/'
     ohe_path = PROJ_PATH + 'data/process/ohe.joblib'
     skf_path = PROJ_PATH + 'data/process/skf5_id_fold_mapping.joblib'
-    model_save_path = PROJ_PATH + 'data/model/A.2'
+    model_save_path = PROJ_PATH + 'data/model/A.3'
     #last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
 
     DATA_PATH = '/home/vadbeg/Data_SSD/Kaggle/happywhale/'
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # load last best model
     # state_dict = torch.load(last_best_model_path)['state_dict']
     # state_dict = {k[len('model.'):]: v for k, v in state_dict.items()}
-    model = EffB0_Arc_v2()
+    model = EffB0_Arc_
     # model.load_state_dict(state_dict)
 
     model = PtlWrapper(model=model,
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     checkpoint_callback = ModelCheckpoint(dirpath=model_save_path,
                                           monitor='val_top5',
                                           save_top_k=3,
-                                          filename='{epoch}-{val_loss:.2f}-{val_map5:.2f}-{val_top5:.2f}',
+                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{train_map5:.2f}-{val_map5:.2f}',
                                           mode='max')
 
     # train

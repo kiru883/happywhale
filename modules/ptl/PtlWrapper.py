@@ -103,9 +103,6 @@ class PtlWrapper(ptl.LightningModule):
 
 
         loss = self.loss(pred_cos_dist, label)
-        print("\nDISTS: ", torch.sort(pred_cos_dist, dim=1)[0])
-        print("\nPROBS max: ", torch.sort(pred_prob, dim=1, descending=True)[0])
-        print("\nLOSSes: ", loss)
         loss = torch.mean(loss)
 
         map5 = self.map5(pred_prob, label)
@@ -131,7 +128,6 @@ class PtlWrapper(ptl.LightningModule):
         map5 = torch.mean(map5).detach()
 
         top5 = torch.stack(tensors=top5)
-        print(torch.max(top5))
         top5 = torch.mean(top5).detach()
 
         top1 = torch.stack(tensors=top1)
