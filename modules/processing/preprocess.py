@@ -86,3 +86,37 @@ def exp_a_basic_preprocessing(msize=224):
     return transform_train, transform_val
 
 
+def exp_b_preprocessing(msize=224):
+    transform_train = A.Compose([
+        A.ImageCompression(quality_lower=80, quality_upper=100, p=0.1),
+        A.ShiftScaleRotate(
+            shift_limit=(-0.1, 0.1),
+            scale_limit=(-0.5, 0.5),
+            rotate_limit=(-25, 25),
+            p=0.18,
+        ),
+        A.Blur(p=0.1),
+
+
+        A.Resize(msize, msize),
+        A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+                max_pixel_value=255.0,
+                p=1.0
+        ),
+        ToTensorV2()], p=1.)
+
+    transform_val = A.Compose([
+            A.Resize(msize, msize),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+                max_pixel_value=255.0,
+                p=1.0
+            ),
+            ToTensorV2()], p=1.)
+
+    return transform_train, transform_val
+
+

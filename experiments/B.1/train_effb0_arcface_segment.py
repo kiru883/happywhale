@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # PROJ_PATH = '/home/kkirill/happywhale/'
     ohe_path = PROJ_PATH + 'data/process/ohe.joblib'
     skf_path = PROJ_PATH + 'data/process/skf5_id_fold_mapping.joblib'
-    model_save_path = PROJ_PATH + 'data/model/B/'
+    model_save_path = PROJ_PATH + 'data/model/B.1/'
     # last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
 
     DATA_PATH = '/media/kirill/Windows 10/kaggle/'
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     checkpoint_callback = ModelCheckpoint(dirpath=model_save_path,
                                           monitor='val_top5',
                                           save_top_k=3,
-                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{train_map5:.2f}-{val_map5:.2f}',
+                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{val_map5:.2f}-{val_map5:.2f}',
                                           mode='max')
 
     # train

@@ -100,9 +100,10 @@ class PtlWrapper(ptl.LightningModule):
         pred_cos_dist = pred_cos_dist.type(torch.float32)
         pred_prob = self.softmax(pred_cos_dist)
 
-
+        print("PROBS: ", pred_prob)
 
         loss = self.loss(pred_cos_dist, label)
+        print("Losses: ", loss)
         loss = torch.mean(loss)
 
         map5 = self.map5(pred_prob, label)

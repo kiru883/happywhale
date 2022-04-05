@@ -9,10 +9,12 @@ class EffNetBx(nn.Module):
     def __init__(self, model_name='tf_efficientnet_b0'):
         super(EffNetBx, self).__init__()
 
-        if model_name == 'tf_efficientnet_b0':
+        if 'tf_efficientnet_b' in model_name:
             self.model = timm.create_model(model_name=model_name, pretrained=True, drop_rate=0.2)
+            in_features = self.model.get_classifier().in_features
+
             self.model.classifier = nn.Identity()
-            self.embed = nn.Linear(in_features=1280, out_features=512)
+            self.embed = nn.Linear(in_features=in_features, out_features=512)
             self.bn = nn.BatchNorm1d(num_features=512)
 
     def forward(self, inp):
@@ -27,13 +29,14 @@ class EffNetBx_v2(nn.Module):
     def __init__(self, model_name='tf_efficientnet_b0'):
         super(EffNetBx_v2, self).__init__()
 
-        if model_name == 'tf_efficientnet_b0':
+        if 'tf_efficientnet_b' in model_name:
             self.model = timm.create_model(model_name=model_name, pretrained=True, drop_rate=0.2)
+            in_features = self.model.get_classifier().in_features
 
             self.model.classifier = nn.Identity()
-            self.bn1 = nn.BatchNorm1d(num_features=1280)
+            self.bn1 = nn.BatchNorm1d(num_features=in_features)
             self.drop = nn.Dropout(p=0.1)
-            self.embed = nn.Linear(in_features=1280, out_features=512)
+            self.embed = nn.Linear(in_features=in_features, out_features=512)
             self.bn2 = nn.BatchNorm1d(num_features=512)
 
     def forward(self, inp):
