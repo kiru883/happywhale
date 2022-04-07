@@ -34,17 +34,32 @@ class DatasetHappywhile(torch.utils.data.Dataset):
         input = cv2.cvtColor(input, cv2.COLOR_RGB2BGR)
         input = self.preprocessing(image=input)['image']
         input = input.type(torch.float32)
-        #print(input.shape)
-        #print("label: ", label.shape)
-        #input = torch.tensor(input, dtype=torch.float32)
-        #input /= 255.0 #torch.max(input)
-        #input = torch.moveaxis(input, 2, 0)
-        #print(input.dtype)
-
-        #print(input)
 
         return {'input': input, 'label': label}
 
+
+class DatasetHappywhileInference(torch.utils.data.Dataset):
+    def __init__(self, image_paths, targets=None, train=False, preprocessing=None):#!!!!!
+        self.image_paths = image_paths
+        self.targets = targets
+        self.train = train
+        self.preprocessing = preprocessing
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, item):
+        img_path = self.image_paths[item]
+        img_tensor = cv2.imread(img_path)
+        img_tensor = cv2.cvtColor(img_tensor, cv2.COLOR_RGB2BGR)
+        img_tensor = self.preprocessing(image=img_tensor)['image']
+        img_tensor = img_tensor.type(torch.float32)
+
+        target = None
+        if self.train:
+            return {'input': img_tensor, 'label': self.targets[item]}
+        else:
+            return {'input': img_tensor}
 
 
 

@@ -20,7 +20,7 @@ if __name__ == "__main__":
     PROJ_PATH = '/home/kkirill/happywhale/'
     ohe_path = PROJ_PATH + 'data/process/ohe.joblib'
     skf_path = PROJ_PATH + 'data/process/skf5_id_fold_mapping.joblib'
-    model_save_path = PROJ_PATH + 'data/model/A.3'
+    model_save_path = PROJ_PATH + 'data/model/A.5'
     #last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
 
     DATA_PATH = '/home/vadbeg/Data_SSD/Kaggle/happywhale/'
@@ -30,11 +30,12 @@ if __name__ == "__main__":
     # train_image_path = PROJ_PATH + 'data/raw/happy-whale-and-dolphin/train_images/'
 
     FOLD_NUM = 0
-    BATCH_SIZE = 32
+    BATCH_SIZE = 8
     EPOCHS = 30
     GPUS = 1
     LR = 1e-3
-    SIZE = 224
+    SIZE = 384
+    MODEL_NAME = 'tf_efficientnet_b4'
 
     SEED_EVERYTHING(SEED)
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     # load last best model
     # state_dict = torch.load(last_best_model_path)['state_dict']
     # state_dict = {k[len('model.'):]: v for k, v in state_dict.items()}
-    model = EffB0_Arc_v3_GEM()
+    model = EffB0_Arc_v3_GEM(eff_name=MODEL_NAME)
     # model.load_state_dict(state_dict)
 
     model = PtlWrapper(model=model,
