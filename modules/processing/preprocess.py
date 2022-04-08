@@ -3,6 +3,25 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 
+def exp_c_basic_preprocessing(msize=224):
+    transform_train = transform_val = A.Compose([
+            A.Resize(msize, msize),
+
+            A.LongestMaxSize(max_size=msize),
+            A.PadIfNeeded(min_height=msize, min_width=msize, border_mode=0),  # 0 - constant replace(0)
+
+
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+                max_pixel_value=255.0,
+                p=1.0
+            ),
+            ToTensorV2()], p=1.)
+
+    return transform_train, transform_val
+
+
 def exp_a_preprocessing(msize=256):
     normalize = lambda x: x / 255.0
 

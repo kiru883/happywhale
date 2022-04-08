@@ -33,6 +33,10 @@ class DatasetHappywhile(torch.utils.data.Dataset):
         input = cv2.imread(self.image_path + image_name) #!!!
         input = cv2.cvtColor(input, cv2.COLOR_RGB2BGR)
         input = self.preprocessing(image=input)['image']
+
+        #plt.imshow(input)
+        #plt.show()
+
         input = input.type(torch.float32)
 
         return {'input': input, 'label': label}

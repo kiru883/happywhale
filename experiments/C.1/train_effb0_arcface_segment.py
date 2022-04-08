@@ -11,7 +11,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from modules.utils.seed_everything import SEED_EVERYTHING
 from modules.dataset.DatasetHappywhile import DatasetHappywhile
 from modules.ptl.PtlWrapper import PtlWrapper
-from modules.processing.preprocess import exp_a_preprocessing, exp_a1_preprocessing, exp_b_preprocessing
+from modules.processing.preprocess import exp_c_basic_preprocessing
 from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc
 
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # PROJ_PATH = '/home/kkirill/happywhale/'
     ohe_path = PROJ_PATH + 'data/process/ohe.joblib'
     skf_path = PROJ_PATH + 'data/process/skf5_id_fold_mapping.joblib'
-    model_save_path = PROJ_PATH + 'data/model/B.2_384/'
+    model_save_path = PROJ_PATH + 'data/model/C.1/'
     # last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
 
     DATA_PATH = '/media/kirill/Windows 10/kaggle/'
@@ -31,8 +31,8 @@ if __name__ == "__main__":
     # train_image_path = DATA_PATH + 'train_images/'
     # train_csv_path = PROJ_PATH + 'data/raw/segmented/seg_train.csv'
     # train_image_path = PROJ_PATH + 'data/raw/segmented/seg_img/'
-    train_csv_path = DATA_PATH + 'segmented/seg_train.csv'
-    train_image_path = DATA_PATH + 'segmented/seg_img/'
+    train_csv_path = DATA_PATH + 'seg_bbox_dataset/seg_train.csv'
+    train_image_path = DATA_PATH + 'seg_bbox_dataset/train_images/'
 
     FOLD_NUM = 0
     BATCH_SIZE = 16
@@ -44,17 +44,8 @@ if __name__ == "__main__":
     SEED_EVERYTHING(SEED)
 
     # model, scheduler
-    step_lr_sch_settings = None#{
-    #     'scheduler': torch.optim.lr_scheduler.StepLR,
-    #     'step_size': 10,
-    #     'gamma': 0.3
-    # }
-    # load last best model
-    #state_dict = torch.load(last_best_model_path)['state_dict']
-    #state_dict = {k[len('model.'):]: v for k, v in state_dict.items()}
+    step_lr_sch_settings = None
     model = EffB0_Arc()
-    #model.load_state_dict(state_dict)
-
     model = PtlWrapper(model=model,
                        lr=LR,
                        sch_settings=step_lr_sch_settings)
@@ -65,7 +56,7 @@ if __name__ == "__main__":
     train_idx, val_idx = skf_folds[FOLD_NUM]['train_idx'], skf_folds[FOLD_NUM]['test_idx']
 
     # datasets, preprocessor
-    train_prep, val_prep = exp_b_preprocessing(msize=SIZE)
+    train_prep, val_prep = exp_c_basic_preprocessing(msize=SIZE)
     train_dataset = DatasetHappywhile(image_path=train_image_path,
                                       train_csv_path=train_csv_path,
                                       specific_indx=train_idx,
@@ -83,7 +74,7 @@ if __name__ == "__main__":
     checkpoint_callback = ModelCheckpoint(dirpath=model_save_path,
                                           monitor='val_top5',
                                           save_top_k=3,
-                                          filename='{epoch}-{train_cross_entropy_loss:.2f}-{val_map5:.2f}-{val_map5:.2f}',
+                                          filename='{epoch}-{val_loss:.2f}-{val_map5:.2f}-{val_top5:.2f}',
                                           mode='max')
 
     # train
