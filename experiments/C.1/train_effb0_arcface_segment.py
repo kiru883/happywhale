@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # PROJ_PATH = '/home/kkirill/happywhale/'
     ohe_path = PROJ_PATH + 'data/process/ohe.joblib'
     skf_path = PROJ_PATH + 'data/process/skf5_id_fold_mapping.joblib'
-    model_save_path = PROJ_PATH + 'data/model/C.1/'
+    model_save_path = PROJ_PATH + 'data/model/C.1_fix/'
     # last_best_model_path = model_save_path + 'epoch=1-train_cross_entropy_loss=21.66-train_map5=0.00-val_map5=0.00.ckpt'
 
     DATA_PATH = '/media/kirill/Windows 10/kaggle/'

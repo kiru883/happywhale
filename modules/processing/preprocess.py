@@ -5,10 +5,9 @@ from albumentations.pytorch import ToTensorV2
 
 def exp_c_basic_preprocessing(msize=224):
     transform_train = transform_val = A.Compose([
-            A.Resize(msize, msize),
 
             A.LongestMaxSize(max_size=msize),
-            A.PadIfNeeded(min_height=msize, min_width=msize, border_mode=0),  # 0 - constant replace(0)
+            A.PadIfNeeded(min_height=msize, min_width=msize, border_mode=0, value=[255, 255, 255]),  # 0 - constant replace(0), 255 - white background
 
 
             A.Normalize(
@@ -17,7 +16,10 @@ def exp_c_basic_preprocessing(msize=224):
                 max_pixel_value=255.0,
                 p=1.0
             ),
-            ToTensorV2()], p=1.)
+
+            ToTensorV2(p=1.0),
+
+    ], p=1.)
 
     return transform_train, transform_val
 
