@@ -12,7 +12,7 @@ from modules.utils.seed_everything import SEED_EVERYTHING
 from modules.dataset.DatasetHappywhile import DatasetHappywhile
 from modules.ptl.PtlWrapper import PtlWrapper
 from modules.processing.preprocess import exp_a_preprocessing, exp_a1_preprocessing, exp_b_preprocessing
-from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc_v2
+from modules.models.experemental.EffBo_Arc_exp_A import EffB0_Arc_v3_GEM, EffB0_Arc_v2
 
 
 if __name__ == "__main__":
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     EPOCHS = 30
     GPUS = 1
     LR = 1e-3
-    SIZE = 224
+    SIZE = 384#224
 
     SEED_EVERYTHING(SEED)
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # load last best model
     #state_dict = torch.load(last_best_model_path)['state_dict']
     #state_dict = {k[len('model.'):]: v for k, v in state_dict.items()}
-    model = EffB0_Arc_v2(eff_name='tf_efficientnet_b4')
+    model = EffB0_Arc_v3_GEM(eff_name='tf_efficientnet_b0')
     #model.load_state_dict(state_dict)
 
     model = PtlWrapper(model=model,
@@ -91,7 +91,8 @@ if __name__ == "__main__":
                           gpus=GPUS,
                           callbacks=[checkpoint_callback],
 
-                          auto_lr_find=True)
+                          auto_lr_find=True,
+                          accumulate_grad_batches=8)
     trainer.fit(model, train_dataset, val_dataset)
 
 
